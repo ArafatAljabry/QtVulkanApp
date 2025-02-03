@@ -1,6 +1,6 @@
 #include "vktriangle.h"
 
-VKTriangle::VKTriangle()
+VKTriangle::VKTriangle() : VisualObject()
 {
     //Y up, front = CCW
     // X, Y, Z  R, G, B   U, V

@@ -3,6 +3,7 @@
 
 #include <QVulkanWindow>
 #include  "VKTriangle.h"
+#include "vktrianglesurface.h"
 
 class RenderWindow : public QVulkanWindowRenderer
 {
@@ -63,6 +64,12 @@ protected:
 private:
     //void updateUniformBuffer (const QMatrix4x4& modelMatrix, int currentframe);
     VKTriangle mTriangle;
+    VKTriangleSurface mSurface;
+    VisualObject mVisualObject;
+    std::vector<VisualObject*> mObjects;
+
+    void createBuffer(VkDevice logicalDevice, const VkDeviceSize uniAlign,
+                      VisualObject* visualObject, VkBufferUsageFlags usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
 };
 
 #endif // RENDERWINDOW_H
