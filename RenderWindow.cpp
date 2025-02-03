@@ -75,7 +75,7 @@ void RenderWindow::initResources()
 
     // Our internal layout is vertex, uniform, uniform, ... with each uniform buffer 
     // start offset aligned to uniAlign.
-    const VkDeviceSize vertexAllocSize = aligned(sizeof(vertexData), uniAlign);
+    const VkDeviceSize vertexAllocSize = aligned(mTriangle.getVertices().size()*sizeof(vertex),uniAlign);
     const VkDeviceSize uniformAllocSize = aligned(UNIFORM_DATA_SIZE, uniAlign);
 	bufInfo.size = vertexAllocSize + concurrentFrameCount * uniformAllocSize; //One vertex buffer and two uniform buffers
 	bufInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT; // Set the usage to both vertex buffer and uniform buffer
@@ -106,7 +106,8 @@ void RenderWindow::initResources()
     err = mDeviceFunctions->vkMapMemory(logicalDevice, mBufferMemory, 0, memReq.size, 0, reinterpret_cast<void **>(&p));
     if (err != VK_SUCCESS)
         qFatal("Failed to map memory: %d", err);
-    memcpy(p, vertexData, sizeof(vertexData));
+    qDebug() << mTriangle.getVertices().size() * sizeof(vertex);
+    memcpy(p, mTriangle.getVertices().data(),mTriangle.getVertices().size()*sizeof(vertex));
     QMatrix4x4 ident;
     memset(mUniformBufferInfo, 0, sizeof(mUniformBufferInfo));
     for (int i = 0; i < concurrentFrameCount; ++i) {
@@ -123,7 +124,7 @@ void RenderWindow::initResources()
     //The size of each vertex to be passed to the shader
     VkVertexInputBindingDescription vertexBindingDesc = {
         0, // binding - has to match that in VkVertexInputAttributeDescription and startNextFrame()s m_devFuncs->vkCmdBindVertexBuffers
-        6 * sizeof(float), // stride account for X, Y, Z, R, G, B
+        sizeof(vertex), // stride account for X, Y, Z, R, G, B, U, V
         VK_VERTEX_INPUT_RATE_VERTEX
     };
 
@@ -430,7 +431,7 @@ void RenderWindow::startNextFrame()
 
     /********************************* Our draw call!: *********************************/
     // the number 3 is the number of vertices, so you have to change that if you add more!
-    mDeviceFunctions->vkCmdDraw(cb, 3, 1, 0, 0);
+    mDeviceFunctions->vkCmdDraw(cb, mTriangle.getVertices().size(), 1, 0, 0);
 
     mDeviceFunctions->vkCmdEndRenderPass(cmdBuf);
 

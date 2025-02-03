@@ -11,6 +11,8 @@ qt_add_executable(QtVulkanApp
     main.cpp
 
     VulkanWindow.h VulkanWindow.cpp
+    vktriangle.h vktriangle.cpp
+    vertex.h vertex.cpp
 )
 # Define the shader files
 set(SHADER_FILES

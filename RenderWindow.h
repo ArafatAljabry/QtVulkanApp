@@ -2,6 +2,7 @@
 #define RENDERWINDOW_H
 
 #include <QVulkanWindow>
+#include  "VKTriangle.h"
 
 class RenderWindow : public QVulkanWindowRenderer
 {
@@ -58,6 +59,10 @@ protected:
     VkPipelineCache mPipelineCache{ VK_NULL_HANDLE };
     VkPipelineLayout mPipelineLayout{ VK_NULL_HANDLE };
     VkPipeline mPipeline{ VK_NULL_HANDLE };
+
+private:
+    //void updateUniformBuffer (const QMatrix4x4& modelMatrix, int currentframe);
+    VKTriangle mTriangle;
 };
 
 #endif // RENDERWINDOW_H
