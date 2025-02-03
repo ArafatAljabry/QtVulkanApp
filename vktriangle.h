@@ -9,6 +9,7 @@ class VKTriangle
 public:
     std::vector<vertex> mVertices;
     VKTriangle();
+    VKTriangle(const std::string &filename);
     std::vector<vertex> getVertices() {return mVertices;}
 };
 

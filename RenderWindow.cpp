@@ -28,6 +28,8 @@ static inline VkDeviceSize aligned(VkDeviceSize v, VkDeviceSize byteAlign)
 RenderWindow::RenderWindow(QVulkanWindow *w, bool msaa)
 	: mWindow(w)
 {
+    mTriangle = new VKTriangle("vert.txt");
+
     if (msaa) {
         const QList<int> counts = w->supportedSampleCounts();
         qDebug() << "Supported sample counts:" << counts;
@@ -75,7 +77,7 @@ void RenderWindow::initResources()
 
     // Our internal layout is vertex, uniform, uniform, ... with each uniform buffer 
     // start offset aligned to uniAlign.
-    const VkDeviceSize vertexAllocSize = aligned(mTriangle.getVertices().size()*sizeof(vertex),uniAlign);
+    const VkDeviceSize vertexAllocSize = aligned(mTriangle->getVertices().size()*sizeof(vertex),uniAlign);
     const VkDeviceSize uniformAllocSize = aligned(UNIFORM_DATA_SIZE, uniAlign);
 	bufInfo.size = vertexAllocSize + concurrentFrameCount * uniformAllocSize; //One vertex buffer and two uniform buffers
 	bufInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT; // Set the usage to both vertex buffer and uniform buffer
@@ -106,8 +108,8 @@ void RenderWindow::initResources()
     err = mDeviceFunctions->vkMapMemory(logicalDevice, mBufferMemory, 0, memReq.size, 0, reinterpret_cast<void **>(&p));
     if (err != VK_SUCCESS)
         qFatal("Failed to map memory: %d", err);
-    qDebug() << mTriangle.getVertices().size() * sizeof(vertex);
-    memcpy(p, mTriangle.getVertices().data(),mTriangle.getVertices().size()*sizeof(vertex));
+    qDebug() << mTriangle->getVertices().size() * sizeof(vertex);
+    memcpy(p, mTriangle->getVertices().data(),mTriangle->getVertices().size()*sizeof(vertex));
     QMatrix4x4 ident;
     memset(mUniformBufferInfo, 0, sizeof(mUniformBufferInfo));
     for (int i = 0; i < concurrentFrameCount; ++i) {
@@ -263,7 +265,7 @@ void RenderWindow::initResources()
     VkPipelineInputAssemblyStateCreateInfo ia;
     memset(&ia, 0, sizeof(ia));
     ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-    ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    ia.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
     pipelineInfo.pInputAssemblyState = &ia;
 
     // The viewport and scissor will be set dynamically via vkCmdSetViewport/Scissor.
@@ -348,10 +350,10 @@ void RenderWindow::initSwapChainResources()
 
     //               vertical angle ,   aspect ratio                    near-  , far plane
     /**PLAY WITH THIS**/
-    mProjectionMatrix.perspective(25.0f,          sz.width() / (float) sz.height(), 0.01f, 100.0f);
-    //Camera is -4 away from origo
+    mProjectionMatrix.perspective(10.0f,          sz.width() / (float) sz.height(), 0.01f, 100.0f);
+    //Camera is -100 away from origo
     /**PLAY WITH THIS**/
-    mProjectionMatrix.translate(0, 0, -4);
+    mProjectionMatrix.translate(0, 0, -50);
 
     //Flip projection because of Vulkan's -Y axis
     mProjectionMatrix.scale(1.0f, -1.0f, 1.0);
@@ -431,7 +433,7 @@ void RenderWindow::startNextFrame()
 
     /********************************* Our draw call!: *********************************/
     // the number 3 is the number of vertices, so you have to change that if you add more!
-    mDeviceFunctions->vkCmdDraw(cb, mTriangle.getVertices().size(), 1, 0, 0);
+    mDeviceFunctions->vkCmdDraw(cb, mTriangle->getVertices().size(), 1, 0, 0);
 
     mDeviceFunctions->vkCmdEndRenderPass(cmdBuf);
 

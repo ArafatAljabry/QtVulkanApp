@@ -7,6 +7,7 @@
 class RenderWindow : public QVulkanWindowRenderer
 {
 public:
+    /*** RenderWindow class ***/
     RenderWindow(QVulkanWindow *w, bool msaa = false);
 
     //Initializes the Vulkan resources needed,
@@ -62,7 +63,7 @@ protected:
 
 private:
     //void updateUniformBuffer (const QMatrix4x4& modelMatrix, int currentframe);
-    VKTriangle mTriangle;
+    VKTriangle* mTriangle;
 };
 
 #endif // RENDERWINDOW_H
