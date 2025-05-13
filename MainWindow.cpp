@@ -10,6 +10,7 @@
 #include <QMenuBar>
 #include <QLineEdit>
 #include <QInputDialog>
+#include <QProcess>
 #include "VulkanWindow.h"
 #include "Renderer.h"
 #include "TriangleSurface.h"
@@ -43,6 +44,8 @@ MainWindow::MainWindow(VulkanWindow *vw, QPlainTextEdit *logWidget)
             { logWidget->moveCursor(QTextCursor::End); });
     //select file to import
     connect(nameButton, SIGNAL(clicked()), this, SLOT(selectName()));   // Dag 040225
+
+
 
     //Makes the layout of the program, adding items we have made
     QVBoxLayout *layout = new QVBoxLayout;
@@ -93,11 +96,14 @@ QMenuBar *MainWindow::createMenu()
     fileMenu = new QMenu(tr("&File"), this);
     openFileAction = fileMenu->addAction(tr("&Open file..."));
     exitAction = fileMenu->addAction(tr("E&xit"));
+    restartAction = fileMenu->addAction("&Restart"); //Note: Pre exam prep; adds the restarta action to the  menu
     menuBar->addMenu(fileMenu);
     menuBar->setVisible(true);
     //
     connect(openFileAction, &QAction::triggered, this, &MainWindow::openFile);
     connect(exitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+    //NOTE: Pre exam prep; connects restartbutton to restart function
+     connect(restartAction, &QAction::triggered, this, &MainWindow::Restart);
 
     return menuBar;
 }
@@ -134,4 +140,13 @@ void MainWindow::selectName()
         msgBox.setIcon(QMessageBox::Warning);
         msgBox.setDefaultButton(QMessageBox::Close);
     }
+}
+
+//NOTE: Exam prep; Restarts application
+void MainWindow::Restart()
+{
+    QString program = qApp->arguments()[0];
+    QStringList arguments = qApp->arguments().mid(1); // remove the 1st argument - the program name
+    qApp->quit();
+    QProcess::startDetached(program, arguments);
 }
