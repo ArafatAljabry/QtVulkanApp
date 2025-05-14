@@ -29,7 +29,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.push_back(new Triangle());
     mObjects.push_back((new TriangleSurface()));
     mObjects.push_back((new WorldAxis()));
-	mObjects.push_back(new HeightMap());
+    mObjects.push_back(new HeightMap());
     mObjects.push_back(new ObjMesh(assetPath + "suzanne.obj"));
     // Dag 030225
     mObjects.at(0)->setName("tri");
@@ -309,6 +309,14 @@ void Renderer::startNextFrame()
     mVulkanWindow->handleInput();
     mCamera.update();               //input can have moved the camera
 
+     //NOTE: makes the player follow the terrain, using barysentric coord
+    HeightMap* terrain = static_cast<HeightMap*>(mObjects.at(3));
+    QVector3D playerPos = mObjects.at(4)->getPosition();
+    float baryCoord = terrain->barysentricCoordFromTerrain(playerPos);
+    playerPos.setY(baryCoord + 0.5);
+    mObjects.at(4)->setPosition(playerPos.x(),playerPos.y(),playerPos.z());
+
+    qDebug(" y value %f", baryCoord);
     VkCommandBuffer commandBuffer = mWindow->currentCommandBuffer();
 
 	setRenderPassParameters(commandBuffer);

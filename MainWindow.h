@@ -36,7 +36,7 @@ private:
     QAction* openFileAction{ nullptr };
     QAction* exitAction{ nullptr };
 
-    //Note: button to restart the application
+    //NOTE: button to restart the application
     QAction* restartAction{nullptr};
     std::string mSelectedName;
 
@@ -44,7 +44,7 @@ private slots:
     void openFile();
     void selectName();
 
-    //Note: defines the function that restarts the game
+    //NOTE: defines the function that restarts the game
     void Restart();
 };
 

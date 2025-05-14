@@ -96,7 +96,7 @@ QMenuBar *MainWindow::createMenu()
     fileMenu = new QMenu(tr("&File"), this);
     openFileAction = fileMenu->addAction(tr("&Open file..."));
     exitAction = fileMenu->addAction(tr("E&xit"));
-    restartAction = fileMenu->addAction("&Restart"); //Note: Pre exam prep; adds the restarta action to the  menu
+    restartAction = fileMenu->addAction("&Restart"); //NOTE: Pre exam prep; adds the restarta action to the  menu
     menuBar->addMenu(fileMenu);
     menuBar->setVisible(true);
     //

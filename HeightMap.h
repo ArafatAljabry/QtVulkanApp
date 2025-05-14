@@ -12,11 +12,14 @@ public:
     void makeTerrain(std::string heightMapImage);
 
     void makeTerrain(unsigned char* textureData, int width, int height);
+    float barysentricCoordFromTerrain(const QVector3D& positionXZ);
 
 private:
 	int mWidth{ 0 };
 	int mHeight{ 0 };
 	int mChannels{ 0 };
+
+
 };
 
 #endif // HEIGHTMAP_H
