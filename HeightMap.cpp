@@ -106,7 +106,7 @@ float HeightMap::barysentricCoordFromTerrain(const QVector3D& position)
     float lambda3;
     QVector3D flatPosition(position.x(),0.0f,position.z());
 
-    for(int i = 0; i < mIndices.size(); i += 3)
+    for(int i = 0; i < mIndices.size() - 2; i += 3)
     {
         const Vertex& v0 = mVertices[mIndices[i]];
         const Vertex& v1 =  mVertices[mIndices[i + 1]];

@@ -39,17 +39,21 @@ protected:
 
     QVulkanWindowRenderer* mRenderer{ nullptr };
     VisualObject* mSelectedObject{ nullptr };
-    int mIndex{0};
+    int mIndex{4};
 
 private:
     void setCameraSpeed(float value);
+    void setMovementSpeed(float value);//NOTE: setter for movementspeed
     Input mInput;
     float mCameraSpeed{0.005f};
+    float mMovementSpeed{0.01f}; //NOTE: Movementspeed variable for object
     float mCameraRotateSpeed{ -0.1f };
     int mMouseXlast{0}; //for mouse rotate input
     int mMouseYlast{0};
 
     class Camera* mCamera{ nullptr };
+
+
 };
 
 #endif // VULKANWINDOW_H

@@ -15,6 +15,8 @@ QVulkanWindowRenderer* VulkanWindow::createRenderer()
 //We set values on the camera a lot from this class, so it is convenient to have a pointer to it
     mCamera = &dynamic_cast<Renderer*>(mRenderer)->mCamera;
 
+    //NOTE: start of controlling the player(object at index 3)
+    mSelectedObject = dynamic_cast<Renderer*>(mRenderer)->mObjects.at(mIndex);
     return mRenderer;
 }
 
@@ -27,6 +29,17 @@ void VulkanWindow::setCameraSpeed(float value)
         mCameraSpeed = 0.01f;
     if (mCameraSpeed > 0.3f)
         mCameraSpeed = 0.3f;
+}
+
+//NOTE:Movementspeed for selected object
+void VulkanWindow::setMovementSpeed(float value)
+{
+    mMovementSpeed += value;
+
+    if(mMovementSpeed < 0.01f)
+        mMovementSpeed = 0.02f;
+    if(mMovementSpeed > 10)
+        mMovementSpeed = 10;
 }
 
 void VulkanWindow::keyPressEvent(QKeyEvent *event)
@@ -51,7 +64,17 @@ void VulkanWindow::keyPressEvent(QKeyEvent *event)
     }
 
     if (event->key() == Qt::Key_0)
-        mIndex = 0;
+    {
+        //mIndex = 0;
+        //NOTE: Change SelectedObject
+        int totalObjects = dynamic_cast<Renderer*>(mRenderer)->mObjects.size();
+        mIndex += 1;
+        if(mIndex > totalObjects - 1)
+            mIndex = 1;//Axis is at one
+        if(mIndex == 3)
+            mIndex = 4; //Terrain at nr 5, dont wanna move that one for now
+        setSelectedObject(dynamic_cast<Renderer*>(mRenderer)->mObjects.at(mIndex));
+    }
     if (event->key() == Qt::Key_1)
         mIndex = 1;
 
@@ -181,6 +204,13 @@ void VulkanWindow::wheelEvent(QWheelEvent *event)
         if (numDegrees.y() > 1)
             setCameraSpeed(0.002f);
     }
+    else{//NOTE: adjust movement speed
+        if (numDegrees.y() < 1)
+            setMovementSpeed(-0.002f);
+        if (numDegrees.y() > 1)
+            setMovementSpeed(0.002f);
+        qDebug("Object movementspeed: %f", mMovementSpeed);
+    }
     qDebug("CameraSpeed: %f", mCameraSpeed);
 }
 
@@ -239,5 +269,26 @@ void VulkanWindow::handleInput()
             mCamera->updateHeigth(mCameraSpeed);
         if (mInput.E)
             mCamera->updateHeigth(-mCameraSpeed);
+    }else{//NOTE: WASD Movement
+        if(mSelectedObject != nullptr)
+        {
+
+            if(mInput.W)
+                mSelectedObject->move(0,0,-mMovementSpeed);
+
+            if(mInput.A)
+                mSelectedObject->move(-mMovementSpeed,0,0);
+
+            if(mInput.S)
+                mSelectedObject->move(0,0,mMovementSpeed);
+
+            if(mInput.D)
+                mSelectedObject->move(mMovementSpeed,0,0);
+
+            if(mInput.E)
+                mSelectedObject->move(0,mMovementSpeed,0);
+            if(mInput.Q)
+                mSelectedObject->move(0,-mMovementSpeed,0);
+        }
     }
 }

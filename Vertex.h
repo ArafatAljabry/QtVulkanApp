@@ -28,6 +28,8 @@ struct  Vertex {
 
     //! Overloaded ostream operator which reads all vertex data from an open textfile stream
     friend std::istream& operator>> (std::istream&, Vertex&);
+
+
 };
 
 #endif // VERTEX_H
