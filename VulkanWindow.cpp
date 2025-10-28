@@ -16,7 +16,7 @@ QVulkanWindowRenderer* VulkanWindow::createRenderer()
     mCamera = &dynamic_cast<Renderer*>(mRenderer)->mCamera;
 
     //NOTE: start of controlling the player(object at index 3)
-    mSelectedObject = dynamic_cast<Renderer*>(mRenderer)->mObjects.at(mIndex);
+    //mSelectedObject = dynamic_cast<Renderer*>(mRenderer)->mObjects.at(mIndex);
     return mRenderer;
 }
 

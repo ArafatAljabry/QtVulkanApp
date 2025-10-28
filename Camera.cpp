@@ -36,7 +36,7 @@ void Camera::pitch(float degrees)
 }
 
 void Camera::yaw(float degrees)
-{
+{  
 	mYaw += degrees;
 }
 

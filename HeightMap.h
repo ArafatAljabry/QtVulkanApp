@@ -15,8 +15,8 @@ public:
     float barysentricCoordFromTerrain(const QVector3D& positionXZ);
 
 private:
-	int mWidth{ 0 };
-	int mHeight{ 0 };
+    int mWidth{2};
+    int mHeight{4};
 	int mChannels{ 0 };
 
 

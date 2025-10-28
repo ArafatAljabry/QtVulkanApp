@@ -7,7 +7,7 @@
 #include "Camera.h"
 #include "VisualObject.h"
 #include "Utilities.h"
-
+#include "physics_system.h"
 class Renderer : public QVulkanWindowRenderer
 {
 public:
@@ -121,6 +121,10 @@ private:
 		//VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };    //also should have had a spesific pipeline layout
         VkPipeline pipeline{ VK_NULL_HANDLE };
     } mColorMaterial;
+
+    // for physics
+private:
+    physics_system *physics;
 };
 
 #endif // RENDERER_H

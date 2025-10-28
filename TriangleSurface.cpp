@@ -34,13 +34,14 @@ TriangleSurface::TriangleSurface(const std::string &filename)
         return;
     // read input from math part of compulsory
     int n;
-    Vertex v;
+    float x,y,z,r,g,b,u,v;
     inn >> n;
+
     for (auto i=0; i<n; i++)
     {
-        inn >> v;
-        mVertices.push_back(v);
-        //qDebug() << v.x << v.y << v.z;
+        inn >> x >> y  >> z  >> r  >> g  >> b >> u  >> v;
+        mVertices.push_back(Vertex(x,y,z,r,g,b,u,v));
+        qDebug() << x << y << z << u << v << r << g << b;
     }
     inn.close();
 }

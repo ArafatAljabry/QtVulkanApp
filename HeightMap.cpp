@@ -10,7 +10,7 @@ void HeightMap::makeTerrain(std::string heightMapImage)
 {
 	//Load the heightmap image
 	//Using stb_image to load the image
-	stbi_uc* pixelData = stbi_load(heightMapImage.c_str(), &mWidth, &mHeight, &mChannels, STBI_rgb_alpha);
+    stbi_uc* pixelData = stbi_load(heightMapImage.c_str(), &mWidth, &mHeight, &mChannels, STBI_rgb_alpha);
 	if (pixelData == nullptr)
     {
 	    qDebug() << "Failed to load heightmap image!";
@@ -97,6 +97,7 @@ void HeightMap::makeTerrain(unsigned char* textureData, int widthIn, int heightI
     //Function not made yet:
     //calculateHeighMapNormals();
 }
+
 
 //NOTE: Get height based on barysentric coordinates of terrain
 float HeightMap::barysentricCoordFromTerrain(const QVector3D& position)
