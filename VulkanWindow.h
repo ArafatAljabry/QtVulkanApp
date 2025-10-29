@@ -23,7 +23,7 @@ public:
     void setSelectedObject(VisualObject* object) { mSelectedObject = object; }
 
     void handleInput();
-
+    class physics_system* physics;
 signals:
     void frameQueued(int colorValue);
 
@@ -39,7 +39,7 @@ protected:
 
     QVulkanWindowRenderer* mRenderer{ nullptr };
     VisualObject* mSelectedObject{ nullptr };
-    int mIndex{4};
+    int mIndex{2};
 
 private:
     void setCameraSpeed(float value);

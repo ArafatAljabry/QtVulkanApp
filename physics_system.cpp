@@ -2,28 +2,21 @@
 #include <QtMath>
 physics_system::physics_system() {}
 
-void physics_system::simulatePhysics(float barrycoord, VisualObject* obj)
+QVector3D physics_system::simulatePhysics(TerrainInfo info, VisualObject* obj)
 {
-    y0 = obj->getPosition().y();
 
-    //Y-axis
-    float v = v0 + g*deltaTime;
-    float y = y0 + v*deltaTime;
+    QVector3D g(0.0f,-9.81f,0.0f);
 
-    v0 = v;
-    y0 = y;
+    QVector3D tyngdeKraftNormal = QVector3D::dotProduct(g, info.normal) *  info.normal;
+    QVector3D tyngdeKraftTangent = g - tyngdeKraftNormal;
 
-    y *= direction;
+
+    v += tyngdeKraftTangent * deltaTime;
+
+
     QVector3D updatedPos = obj->getPosition();
-    if(y > barrycoord)
-        updatedPos.setY(y); //Unngår å lage kollisjons deteksjon
+    updatedPos += v * deltaTime;
 
-    // X og Z - Akse
-    float x,z;
-    x = z = g * qCos(qDegreesToRadians(90 - obj->getPosition().length()));
 
-    updatedPos.setX(x);
-    updatedPos.setZ(z);
-
-    obj->setPosition(updatedPos);
+    return updatedPos;
 }

@@ -11,12 +11,10 @@ QVulkanWindowRenderer* VulkanWindow::createRenderer()
     //Makes a new instance of the RenderWindow (our Renderer) class
     mRenderer = new Renderer(this, true); // last true == try MSAA
 
-    //Camera is made when the renderer is made, so we know it is valid now
-//We set values on the camera a lot from this class, so it is convenient to have a pointer to it
     mCamera = &dynamic_cast<Renderer*>(mRenderer)->mCamera;
-
+    physics = dynamic_cast<Renderer*>(mRenderer)->physics;
     //NOTE: start of controlling the player(object at index 3)
-    //mSelectedObject = dynamic_cast<Renderer*>(mRenderer)->mObjects.at(mIndex);
+    mSelectedObject = dynamic_cast<Renderer*>(mRenderer)->mObjects.at(mIndex);
     return mRenderer;
 }
 
@@ -253,6 +251,10 @@ void VulkanWindow::mouseMoveEvent(QMouseEvent *event)
 
 void VulkanWindow::handleInput()
 {
+    //Activate physics
+    if(mInput.MMB)
+        physics->turnON = true;
+
     //Camera
     mCamera->setSpeed(0.f);  //cancel last frame movement
     if (mInput.RMB)

@@ -28,8 +28,9 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
 
     mObjects.push_back((new WorldAxis()));//NOTE::switched places
     //mObjects.push_back(new TriangleSurface(assetPath + "vinkletoverflate.txt"));
-    mObjects.push_back(new HeightMap());
-     mObjects.push_back(new ObjMesh(assetPath + "suzanne.obj"));
+    //mObjects.push_back(new ObjMesh(assetPath + "untitled.obj"));
+    mObjects.push_back(new TriangleSurface());
+    mObjects.push_back(new ObjMesh(assetPath + "sphere.obj"));
     /*mObjects.push_back(new Triangle());
     mObjects.push_back((new TriangleSurface()));
     mObjects.push_back(new ObjMesh(assetPath + "suzanne.obj"));
@@ -37,7 +38,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     // Dag 030225
     mObjects.at(0)->setName("axis");
     mObjects.at(1)->setName("terrain");
-    mObjects.at(2)->setName("suzanne");
+    mObjects.at(2)->setName("sphere");
     /*mObjects.at(0)->setName("tri");
     mObjects.at(1)->setName("quad");
 
@@ -45,18 +46,19 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
 
 
 */
-    static_cast<HeightMap*>(mObjects.at(1))->makeTerrain(assetPath + "Heightmap.jpg");
+    //static_cast<HeightMap*>(mObjects.at(1))->makeTerrain(assetPath + "Heightmap.jpg");
     // **************************************
     // Objects in optional map
     // **************************************
     for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
         mMap.insert(std::pair<std::string, VisualObject*>{(*it)->getName(),*it});
 
-	//Inital position of the camera
     mCamera.setPosition(QVector3D(-0.5, -0.5, -8));
-
+    mObjects.at(2)->setPosition(-0.104,2.01,1.99);
     //Need access to our VulkanWindow so making a convenience pointer
     mVulkanWindow = dynamic_cast<VulkanWindow*>(w);
+
+    mObjects.at(1)->scale(10);
 
     // Initialize the physics
     physics = new physics_system();
@@ -319,15 +321,36 @@ void Renderer::startNextFrame()
     mVulkanWindow->handleInput();
     mCamera.update();               //input can have moved the camera
 
-     //NOTE: makes the player follow the terrain, using barysentric coord
-    HeightMap* terrain = static_cast<HeightMap*>(mObjects.at(1));
+
+
+    //NOTE: makes the player follow the terrain, using barysentric coord
+    VisualObject* terrain = static_cast<VisualObject*>(mObjects.at(1));
     QVector3D playerPos = mObjects.at(2)->getPosition();
-    float barryCoord = terrain->barysentricCoordFromTerrain(playerPos) + 0.5; // added 0.5 for a lil extra space
+    //float barryCoord = terrain->barysentricCoordFromTerrain(playerPos) + 0.5; // added 0.5 for a lil extra space
     //playerPos.setY(baryCoord + 0.5);
     //mObjects.at(4)->setPosition(playerPos.x(),playerPos.y(),playerPos.z());
 
-    physics->simulatePhysics(barryCoord, mObjects.at(2));
-    //qDebug(" y value %f", barryCoord);
+    //TerrainInfo barryCoord = terrain->barysentricCoordFromTerrain(playerPos);
+    //playerPos.setY(barryCoord.height);
+    //mObjects.at(2)->setPosition(playerPos.x(),playerPos.y(),playerPos.z());
+
+
+
+    if(physics->turnON)
+    {
+        TerrainInfo info = terrain->barysentricCoordFromTerrain(playerPos);
+        QVector3D Pos = physics->simulatePhysics(info, mObjects.at(2));
+        mObjects.at(2)->setPosition(Pos.x(),info.height + .3f,Pos.z());
+    }
+    //qDebug(" xyz value %f %f %f; barryCoord %f",playerPos.x(), playerPos.y(),playerPos.z(), barryCoord);
+
+
+
+
+
+
+
+
     VkCommandBuffer commandBuffer = mWindow->currentCommandBuffer();
 
 	setRenderPassParameters(commandBuffer);
