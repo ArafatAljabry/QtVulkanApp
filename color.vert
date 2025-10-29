@@ -20,5 +20,5 @@ void main()
 {
     vColor = color;
     gl_Position =   camera.projection * camera.view * model.model * vec4(position, 1.0);
-    gl_PointSize = 10;
+    gl_PointSize = 5;
 }

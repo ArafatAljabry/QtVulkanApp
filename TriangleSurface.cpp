@@ -94,7 +94,7 @@ TriangleSurface::TriangleSurface(const std::string &filename)
     double centerZ = sumZ / tempVertices.size();
 
     // Skaler og sentraliser
-    double scale = 10;
+    double scale = 1;
     for (auto& v : tempVertices) {
         v.x = (v.x - centerX) * scale;
         v.y = (v.y - centerY) * scale;
