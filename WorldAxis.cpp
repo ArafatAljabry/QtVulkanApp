@@ -13,4 +13,3 @@ WorldAxis::WorldAxis()
 
     mMatrix.setToIdentity();
 }
-

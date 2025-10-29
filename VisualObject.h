@@ -6,6 +6,11 @@
 #include "Vertex.h"
 #include "Utilities.h"
 
+struct TerrainInfo {
+    float height;
+    QVector3D normal;
+};
+
 class VisualObject
 {
 public:
@@ -14,7 +19,7 @@ public:
     void move(float x, float y = 0.0f, float z = 0.0f);
     void scale(float s);
     void rotate(float t, float x, float y, float z);
-
+    TerrainInfo barysentricCoordFromTerrain(const QVector3D& position);
 	//Setters and Getters
     inline std::vector<Vertex> getVertices() { return mVertices; }
     inline VkBuffer& getVBuffer() { return mVertexBuffer.mBuffer; }

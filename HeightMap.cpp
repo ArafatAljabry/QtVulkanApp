@@ -114,6 +114,7 @@ float HeightMap::barysentricCoordFromTerrain(const QVector3D& position)
         const Vertex& v2 =  mVertices[mIndices[i + 2]];
 
 
+
         //Three vectors that form the triangle, leave the third dimention behind
         QVector3D pointA(v0.x,v0.y,v0.z);
         QVector3D pointB(v1.x,v1.y,v1.z);

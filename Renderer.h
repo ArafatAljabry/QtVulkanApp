@@ -123,7 +123,7 @@ private:
     } mColorMaterial;
 
     // for physics
-private:
+public:
     physics_system *physics;
 };
 

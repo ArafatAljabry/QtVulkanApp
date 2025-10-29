@@ -165,3 +165,57 @@ bool ObjMesh::readObjFile(const std::string& filename)
     return true;
 }
 
+
+
+//NOTE: Get height based on barysentric coordinates of terrain
+float ObjMesh::barysentricCoordFromTerrain(const QVector3D& position)
+{
+    float lambda1;
+    float lambda2;
+    float lambda3;
+    QVector3D flatPosition(position.x(),0.0f,position.z());
+
+    for(int i = 0; i < mIndices.size() - 2; i += 3)
+    {
+        const Vertex& v0 = mVertices[mIndices[i]];
+        const Vertex& v2 =  mVertices[mIndices[i + 1]];
+        const Vertex& v1 =  mVertices[mIndices[i + 2]];
+
+
+        //Three vectors that form the triangle, leave the third dimention behind
+        QVector3D pointA(v0.x,v0.y,v0.z);
+        QVector3D pointB(v1.x,v1.y,v1.z);
+        QVector3D pointC(v2.x,v2.y,v2.z);
+
+        //Vectors
+        QVector3D AB = pointB - pointA;
+        QVector3D AC = pointC - pointA;
+        QVector3D CP = flatPosition - pointC;
+        QVector3D CA = pointA - pointC;
+        QVector3D BP = flatPosition - pointB;
+        QVector3D BC = pointC - pointB;
+
+        //Area
+        float areaABC = QVector3D::crossProduct(AB,AC).y();
+        float areaPCA = QVector3D::crossProduct(CA,CP).y();
+        float areaPBC = QVector3D::crossProduct(BC,BP).y();
+
+        // Avoid divide-by-zero (degenerate triangle)
+        if (fabs(areaABC) < 1e-6f) continue;
+
+        //Barysentric coordinates
+        lambda1 = areaPCA / areaABC;
+        lambda2 = areaPBC / areaABC;
+        lambda3 = 1.0f - lambda2 - lambda1;
+
+        if(lambda1 >= 0.0f && lambda2 >= 0.0f && lambda3 >= 0.0f)
+        {
+            float height = lambda1 * v0.y + lambda2 * v1.y + lambda3 * v2.y;
+            return height;
+        }
+
+    }
+
+    return 0.0f;
+}
+
