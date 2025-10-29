@@ -27,9 +27,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     }
 
     mObjects.push_back((new WorldAxis()));//NOTE::switched places
-    //mObjects.push_back(new TriangleSurface(assetPath + "vinkletoverflate.txt"));
-    //mObjects.push_back(new ObjMesh(assetPath + "untitled.obj"));
-    mObjects.push_back(new TriangleSurface());
+    mObjects.push_back(new TriangleSurface(assetPath + "lazzlo_smaller.txt"));
     mObjects.push_back(new ObjMesh(assetPath + "sphere.obj"));
     /*mObjects.push_back(new Triangle());
     mObjects.push_back((new TriangleSurface()));
@@ -37,8 +35,9 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     */
     // Dag 030225
     mObjects.at(0)->setName("axis");
-    mObjects.at(1)->setName("terrain");
-    mObjects.at(2)->setName("sphere");
+    mObjects.at(1)->setName("lazzlo");
+    mObjects.at(1)->setDrawType(1);
+    //mObjects.at(2)->setName("sphere");
     /*mObjects.at(0)->setName("tri");
     mObjects.at(1)->setName("quad");
 
@@ -53,12 +52,12 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
         mMap.insert(std::pair<std::string, VisualObject*>{(*it)->getName(),*it});
 
-    mCamera.setPosition(QVector3D(-0.5, -0.5, -8));
-    mObjects.at(2)->setPosition(-0.104,2.01,1.99);
+    mCamera.setPosition(QVector3D(0, 0, 0));
+    //mObjects.at(2)->setPosition(-0.104,2.01,1.99);
     //Need access to our VulkanWindow so making a convenience pointer
     mVulkanWindow = dynamic_cast<VulkanWindow*>(w);
 
-    mObjects.at(1)->scale(10);
+    //mObjects.at(1)->scale(10);
 
     // Initialize the physics
     physics = new physics_system();
@@ -268,7 +267,9 @@ void Renderer::initResources()
 
 	//Making a pipeline for drawing lines
 	mColorMaterial.pipeline = mPipeline1;                       // reusing most of the settings from the first pipeline
-    inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;   // draw lines
+    inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+    inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAssembly.primitiveRestartEnable = VK_FALSE;    // draw lines
     rasterization.polygonMode = VK_POLYGON_MODE_FILL;           // VK_POLYGON_MODE_LINE will make a wireframe; VK_POLYGON_MODE_FILL
     rasterization.lineWidth = 5.0f;
     pipelineInfo.pInputAssemblyState = &inputAssembly;
@@ -276,6 +277,9 @@ void Renderer::initResources()
     result = mDeviceFunctions->vkCreateGraphicsPipelines(logicalDevice, mPipelineCache, 1, &pipelineInfo, nullptr, &mColorMaterial.pipeline);
     if (result != VK_SUCCESS)
         qFatal("Failed to create graphics pipeline: %d", result);
+
+
+
 
 
 	// Destroying the shader modules, we won't need them anymore after the pipeline is created
@@ -322,7 +326,7 @@ void Renderer::startNextFrame()
     mCamera.update();               //input can have moved the camera
 
 
-
+/*
     //NOTE: makes the player follow the terrain, using barysentric coord
     VisualObject* terrain = static_cast<VisualObject*>(mObjects.at(1));
     QVector3D playerPos = mObjects.at(2)->getPosition();
@@ -343,7 +347,7 @@ void Renderer::startNextFrame()
         mObjects.at(2)->setPosition(Pos.x(),info.height + .3f,Pos.z());
     }
     //qDebug(" xyz value %f %f %f; barryCoord %f",playerPos.x(), playerPos.y(),playerPos.z(), barryCoord);
-
+*/
 
 
 
@@ -368,7 +372,8 @@ void Renderer::startNextFrame()
         //Draw type
 		if ((*it)->getDrawType() == 0)
 			mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline1);
-		else
+
+        else
 			mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mColorMaterial.pipeline);
 
         QMatrix4x4 mvp = mCamera.projectionMatrix() * mCamera.viewMatrix() * (*it)->getMatrix();

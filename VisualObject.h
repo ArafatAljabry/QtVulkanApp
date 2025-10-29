@@ -36,7 +36,7 @@ public:
     inline QMatrix4x4 getMatrix() const {return mMatrix;}
     inline std::vector<Vertex> getVertices() const { return mVertices; }
     inline std::vector<uint32_t> getIndices() const { return mIndices; }
-
+    inline void setDrawType(int newDrawtype){drawType = newDrawtype;}
     QVector3D getPosition();
     void setPosition(float x, float y, float z);
     void setPosition(QVector3D newPosition);

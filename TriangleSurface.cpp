@@ -39,7 +39,7 @@ TriangleSurface::TriangleSurface() : VisualObject()
     //mMatrix.translate(0.5f, 0.1f, 0.1f);
 }
 
-TriangleSurface::TriangleSurface(const std::string &filename)
+/*TriangleSurface::TriangleSurface(const std::string &filename)
 {
     std::ifstream inn(filename);
     if (!inn.is_open())
@@ -57,4 +57,50 @@ TriangleSurface::TriangleSurface(const std::string &filename)
         qDebug() << x << y << z << u << v << r << g << b;
     }
     inn.close();
+}*/
+TriangleSurface::TriangleSurface(const std::string &filename)
+{
+    std::ifstream inn(filename);
+    if (!inn.is_open())
+        return;
+
+    int n;
+    double x, y, z;
+    double u = 0, v = 0;
+    double r = 255, g = 255, b = 255;
+
+    inn >> n;
+    std::vector<Vertex> tempVertices;
+
+    // Les inn punktene først
+    for (int i = 0; i < n; ++i)
+    {
+        inn >> x >> y >> z;
+
+        // Bytt Y og Z for å få høyde som opp-retning
+        tempVertices.push_back(Vertex(x, z, y, r, g, b, u, v));
+    }
+    inn.close();
+
+    // Finn midtpunktet
+    double sumX = 0, sumY = 0, sumZ = 0;
+    for (const auto& v : tempVertices) {
+        sumX += v.x;
+        sumY += v.y;
+        sumZ += v.z;
+    }
+    double centerX = sumX / tempVertices.size();
+    double centerY = sumY / tempVertices.size();
+    double centerZ = sumZ / tempVertices.size();
+
+    // Skaler og sentraliser
+    double scale = 10;
+    for (auto& v : tempVertices) {
+        v.x = (v.x - centerX) * scale;
+        v.y = (v.y - centerY) * scale;
+        v.z = (v.z - centerZ) * scale;
+
+        mVertices.push_back(v);
+        qDebug() << v.x << v.y << v.z << v.u << v.v << v.r << v.g << v.b;
+    }
 }
