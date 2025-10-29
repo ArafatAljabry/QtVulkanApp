@@ -11,11 +11,18 @@ QVector3D physics_system::simulatePhysics(TerrainInfo info, VisualObject* obj)
     QVector3D tyngdeKraftTangent = g - tyngdeKraftNormal;
 
 
+
+    QVector3D velocityDirection = QVector3D(v.x(), 0.0f, v.z()).normalized(); // velocity direction
+    QVector3D FrictionDecelerationVec = -velocityDirection * (.15 / 1);  // friction opposes motion
+
+
     v += tyngdeKraftTangent * deltaTime;
+    v += FrictionDecelerationVec * deltaTime;
 
 
     QVector3D updatedPos = obj->getPosition();
     updatedPos += v * deltaTime;
+
 
 
     return updatedPos;
