@@ -19,7 +19,7 @@ TriangleSurface::TriangleSurface() : VisualObject()
     mVertices.push_back(v5);
     mVertices.push_back(v6);
 
-	//Indexes for the two triangles to form a quad
+    //Indexes for the two triangles to form a quad
     mIndices.push_back(0);
     mIndices.push_back(1);
     mIndices.push_back(2);

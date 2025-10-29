@@ -40,6 +40,7 @@ void VisualObject::setPosition(QVector3D newPosition)
     mMatrix(1, 3) = newPosition.y(); // Position in the y-axis
     mMatrix(2, 3) = newPosition.z(); // Position in the z-axis
 }
+
 TerrainInfo VisualObject::barysentricCoordFromTerrain(const QVector3D& position)
 {
     QVector2D p(position.x(), position.z());

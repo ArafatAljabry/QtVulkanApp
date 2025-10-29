@@ -5,12 +5,6 @@ physics_system::physics_system() {}
 QVector3D physics_system::simulatePhysics(TerrainInfo info, VisualObject* obj)
 {
 
-    // Setter m = 1, så a = F
-
-
-
-
-
     QVector3D g(0.0f,-9.81f,0.0f);
 
     QVector3D tyngdeKraftNormal = QVector3D::dotProduct(g, info.normal) *  info.normal;

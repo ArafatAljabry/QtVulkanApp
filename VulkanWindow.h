@@ -5,7 +5,6 @@
 #include "VisualObject.h"
 #include "Input.h"
 
-
 /*The QVulkanWindow subclass reimplements the factory function QVulkanWindow::createRenderer().
 This returns a new instance of the QVulkanWindowRenderer subclass.
 A QVulkanWindow is a Vulkan-capable QWindow that manages a Vulkan device, a graphics queue,
@@ -25,7 +24,6 @@ public:
 
     void handleInput();
     class physics_system* physics;
-
 signals:
     void frameQueued(int colorValue);
 
@@ -48,7 +46,7 @@ private:
     void setMovementSpeed(float value);//NOTE: setter for movementspeed
     Input mInput;
     float mCameraSpeed{0.005f};
-    float mMovementSpeed{0.1f}; //NOTE: Movementspeed variable for object
+    float mMovementSpeed{0.01f}; //NOTE: Movementspeed variable for object
     float mCameraRotateSpeed{ -0.1f };
     int mMouseXlast{0}; //for mouse rotate input
     int mMouseYlast{0};

@@ -39,14 +39,10 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.at(0)->setName("axis");
     mObjects.at(1)->setName("terrain");
     mObjects.at(2)->setName("sphere");
-
-    //mObjects.at(3)->);
-
     /*mObjects.at(0)->setName("tri");
     mObjects.at(1)->setName("quad");
 
 	mObjects.at(3)->setName("terrain");
-
 
 
 */
@@ -57,10 +53,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
         mMap.insert(std::pair<std::string, VisualObject*>{(*it)->getName(),*it});
 
-	//Inital position of the camera
     mCamera.setPosition(QVector3D(-0.5, -0.5, -8));
-   // mCamera.setPosition(QVector3D(-0.5, -0.5, -8));
-     mCamera.setPosition(QVector3D(0, 0, 0));
     mObjects.at(2)->setPosition(-0.104,2.01,1.99);
     //Need access to our VulkanWindow so making a convenience pointer
     mVulkanWindow = dynamic_cast<VulkanWindow*>(w);
@@ -218,6 +211,7 @@ void Renderer::initResources()
 	// **** Input Assembly **** - describes how primitives are assembled in the Graphics pipeline
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
     inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;       //Draw triangles
 	inputAssembly.primitiveRestartEnable = VK_FALSE;                    //Allow strips to be connected, not used in TriangleList
     pipelineInfo.pInputAssemblyState = &inputAssembly;
 
@@ -274,6 +268,7 @@ void Renderer::initResources()
 
 	//Making a pipeline for drawing lines
 	mColorMaterial.pipeline = mPipeline1;                       // reusing most of the settings from the first pipeline
+    inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;   // draw lines
     rasterization.polygonMode = VK_POLYGON_MODE_FILL;           // VK_POLYGON_MODE_LINE will make a wireframe; VK_POLYGON_MODE_FILL
     rasterization.lineWidth = 5.0f;
     pipelineInfo.pInputAssemblyState = &inputAssembly;
@@ -316,6 +311,7 @@ void Renderer::initSwapChainResources()
     const QSize sz = mWindow->swapChainImageSize();
 
     //This sets the projection matrix - also when resizing the window:
+    mCamera.perspective(45.0f, sz.width() / (float) sz.height(), 0.01f, 500.0f);
 }
 
 void Renderer::startNextFrame()
@@ -325,7 +321,9 @@ void Renderer::startNextFrame()
     mVulkanWindow->handleInput();
     mCamera.update();               //input can have moved the camera
 
-     //NOTE: makes the player follow the terrain, using barysentric coord
+
+
+    //NOTE: makes the player follow the terrain, using barysentric coord
     VisualObject* terrain = static_cast<VisualObject*>(mObjects.at(1));
     QVector3D playerPos = mObjects.at(2)->getPosition();
     //float barryCoord = terrain->barysentricCoordFromTerrain(playerPos) + 0.5; // added 0.5 for a lil extra space
@@ -345,6 +343,14 @@ void Renderer::startNextFrame()
         mObjects.at(2)->setPosition(Pos.x(),info.height + .3f,Pos.z());
     }
     //qDebug(" xyz value %f %f %f; barryCoord %f",playerPos.x(), playerPos.y(),playerPos.z(), barryCoord);
+
+
+
+
+
+
+
+
     VkCommandBuffer commandBuffer = mWindow->currentCommandBuffer();
 
 	setRenderPassParameters(commandBuffer);
